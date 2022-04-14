@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
 
+import domain.exceptions.DuplicatedGameKeyException;
+import domain.exceptions.IllegalGameException;
 import org.junit.Before;
 import org.junit.Test;
 
