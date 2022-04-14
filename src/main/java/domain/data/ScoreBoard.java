@@ -1,6 +1,7 @@
 package domain.data;
 
 import domain.exceptions.DuplicatedGameKeyException;
+import domain.exceptions.GameNotFoundException;
 import domain.exceptions.IllegalGameException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,6 +28,14 @@ public class ScoreBoard {
 
     ongoingGames.add(gameToStart);
     return gameToStart;
+  }
+
+  public void updateScore(final Game game, final int homeTeamScore, final int awayTeamScore) {
+    if (isOngoingGame(game)) {
+      game.updateScore(homeTeamScore, awayTeamScore);
+    } else {
+      throw new GameNotFoundException("Cannot update score of an unknown game");
+    }
   }
 
   public void finishGame(final Game game) {
