@@ -114,4 +114,46 @@ public class ScoreBoardTest {
         .isEqualTo(startedGame);
   }
 
+  @Test
+  public void shouldUpdateScoreOfOngoingGame() {
+    // given
+    final var firstStartedGame = scoreBoard.startGame(HOME_TEAM, AWAY_TEAM);
+    final var secondStartedGame = scoreBoard.startGame(AWAY_TEAM, HOME_TEAM);
+
+    // when
+    scoreBoard.updateScore(firstStartedGame, 2, 1);
+
+    // then
+    assertThat(firstStartedGame)
+        .extracting(Game::getHomeTeamScore, Game::getAwayTeamScore)
+        .containsExactly(2, 1);
+
+    assertThat(scoreBoard.getSummary())
+        .extracting(Game::getHomeTeamScore, Game::getAwayTeamScore)
+        .containsExactlyInAnyOrder(
+            tuple(2, 1),
+            tuple(0, 0)
+        );
+  }
+
+  @Test
+  public void shouldThrowExceptionWhenGameToBeUpdatedDoesNotExist() {
+    // given
+    final var startedGame = scoreBoard.startGame(HOME_TEAM, AWAY_TEAM);
+    final var scheduledGame = Game.of(AWAY_TEAM, HOME_TEAM);
+
+    // when
+    final var thrown = catchThrowable(() -> scoreBoard.updateScore(scheduledGame, 1, 0));
+
+    // then
+    assertThat(thrown)
+        .isInstanceOf(GameNotFoundException.class)
+        .hasMessage("Cannot update score of an unknown game");
+
+    assertThat(scoreBoard.getSummary())
+        .singleElement()
+        .extracting(Game::getHomeTeamScore, Game::getAwayTeamScore)
+        .containsExactly(0, 0);
+  }
+
 }
