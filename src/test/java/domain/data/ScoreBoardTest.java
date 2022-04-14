@@ -56,7 +56,9 @@ public class ScoreBoardTest {
     final var thrown = catchThrowable(() -> scoreBoard.startGame(null, HOME_TEAM));
 
     // then
-    assertThat(thrown).isInstanceOf(RuntimeException.class);
+    assertThat(thrown)
+        .isInstanceOf(IllegalGameException.class)
+        .hasMessage("Game cannot be started for a null team.");
   }
 
   @Test
@@ -68,9 +70,10 @@ public class ScoreBoardTest {
     final var thrown = catchThrowable(() -> scoreBoard.startGame(HOME_TEAM, AWAY_TEAM));
 
     // then
-    assertThat(thrown).isInstanceOf(RuntimeException.class);
+    assertThat(thrown)
+        .isInstanceOf(DuplicatedGameKeyException.class)
+        .hasMessage("New game cannot be started for Home Team and Away Team until the ongoing game is not finished.");
     assertThat(scoreBoard.getSummary()).hasSize(1);
   }
-
 
 }
