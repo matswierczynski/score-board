@@ -32,6 +32,10 @@ public class ScoreBoardTest {
     assertThat(startedGame)
         .extracting(Game::getAwayTeamScore, Game::getHomeTeamScore)
         .allSatisfy(score -> assertThat(score).isEqualTo(0));
+
+    assertThat(scoreBoard.getSummary())
+        .singleElement()
+        .isEqualTo(startedGame);
   }
 
   @Test
@@ -66,7 +70,7 @@ public class ScoreBoardTest {
   @Test
   public void shouldThrowExceptionWhenUnfinishedGameIsAddedOneMoreTime() {
     // given
-    scoreBoard.startGame(HOME_TEAM, AWAY_TEAM);
+    final var startedGame = scoreBoard.startGame(HOME_TEAM, AWAY_TEAM);
 
     // when
     final var thrown = catchThrowable(() -> scoreBoard.startGame(HOME_TEAM, AWAY_TEAM));
@@ -75,7 +79,39 @@ public class ScoreBoardTest {
     assertThat(thrown)
         .isInstanceOf(DuplicatedGameKeyException.class)
         .hasMessage("New game cannot be started for Home Team and Away Team until the ongoing game is not finished.");
-    assertThat(scoreBoard.getSummary()).hasSize(1);
+    assertThat(scoreBoard.getSummary())
+        .singleElement()
+        .isEqualTo(startedGame);
+  }
+
+  @Test
+  public void shouldFinishGameAndRemoveItFromScoreboard() {
+    // given
+    final var firstStartedGame = scoreBoard.startGame(HOME_TEAM, AWAY_TEAM);
+    final var secondStartedGame = scoreBoard.startGame(AWAY_TEAM, HOME_TEAM);
+
+    // when
+    scoreBoard.finishGame(firstStartedGame);
+
+    // then
+    assertThat(scoreBoard.getSummary())
+        .singleElement()
+        .isEqualTo(secondStartedGame);
+  }
+
+  @Test
+  public void shouldNotThrowAnyErrorWhenGameToBeFinishedDoesNotExist() {
+    // given
+    final var startedGame = scoreBoard.startGame(HOME_TEAM, AWAY_TEAM);
+    final var additionalGameToStart = Game.of(AWAY_TEAM, HOME_TEAM);
+
+    // when
+    scoreBoard.finishGame(additionalGameToStart);
+
+    // then
+    assertThat(scoreBoard.getSummary())
+        .singleElement()
+        .isEqualTo(startedGame);
   }
 
 }
