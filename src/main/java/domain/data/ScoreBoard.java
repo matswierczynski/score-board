@@ -29,6 +29,10 @@ public class ScoreBoard {
     return gameToStart;
   }
 
+  public void finishGame(final Game game) {
+    ongoingGames.remove(game);
+  }
+
   public Set<Game> getSummary() {
     return Collections.unmodifiableSet(ongoingGames);
   }
