@@ -208,12 +208,13 @@ public class ScoreBoardTest {
     assertThat(gamesSummary).containsExactly(secondGame, fourthGame, thirdGame, firstGame);
 
     final var summaryBuilder = new StringBuilder();
+    summaryBuilder.append("\n");
     stringifyGame(summaryBuilder, secondGame);
     stringifyGame(summaryBuilder, fourthGame);
     stringifyGame(summaryBuilder, thirdGame);
     stringifyGame(summaryBuilder, firstGame);
 
-    assertThat(gamesSummary.toString()).isEqualTo(summaryBuilder.toString());
+    assertThat(scoreBoard.toString()).isEqualTo(summaryBuilder.toString());
   }
 
   private void stringifyGame(final StringBuilder builder, final Game game) {

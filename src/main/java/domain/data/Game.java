@@ -1,5 +1,6 @@
 package domain.data;
 
+import java.time.Instant;
 import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,6 +17,8 @@ public class Game {
   @EqualsAndHashCode.Include
   private final Team awayTeam;
 
+  private final Instant startDate;
+
   private int homeTeamScore;
 
   private int awayTeamScore;
@@ -27,5 +30,10 @@ public class Game {
   void updateScore(final int homeTeamScore, final int awayTeamScore) {
     this.homeTeamScore = homeTeamScore;
     this.awayTeamScore = awayTeamScore;
+  }
+
+  @Override
+  public String toString() {
+    return homeTeam.toString() + " " + homeTeamScore + " - " + awayTeam.getName() + " " + awayTeamScore;
   }
 }

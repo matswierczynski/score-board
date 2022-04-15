@@ -3,20 +3,25 @@ package domain.data;
 import domain.exceptions.DuplicatedGameKeyException;
 import domain.exceptions.GameNotFoundException;
 import domain.exceptions.IllegalGameException;
-import java.util.Collections;
+import java.time.Clock;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ScoreBoard {
 
+  private final Clock clock;
   private final Set<Game> ongoingGames;
 
-  public ScoreBoard() {
+  public ScoreBoard(final Clock clock) {
+    this.clock = clock;
     this.ongoingGames = new HashSet<>();
   }
 
   public Game startGame(final Team homeTeam, final Team awayTeam) {
-    final var gameToStart = Game.of(homeTeam, awayTeam);
+    final var gameToStart = Game.of(homeTeam, awayTeam, clock.instant());
 
     if (!gameToStart.isValidGame()) {
       throw new IllegalGameException("Game cannot be started for a null team.");
@@ -42,11 +47,29 @@ public class ScoreBoard {
     ongoingGames.remove(game);
   }
 
-  public Set<Game> getSummary() {
-    return Collections.unmodifiableSet(ongoingGames);
+  public List<Game> getSummary() {
+    return ongoingGames.stream()
+        .sorted(getReversedTotalScoreAndStartDateComparator())
+        .collect(Collectors.toUnmodifiableList());
   }
 
   private boolean isOngoingGame(final Game game) {
     return ongoingGames.contains(game);
+  }
+
+  private Comparator<Game> getReversedTotalScoreAndStartDateComparator() {
+    return Comparator
+        .comparingInt((Game game) -> game.getHomeTeamScore() + game.getAwayTeamScore())
+        .thenComparing(Game::getStartDate)
+        .reversed();
+  }
+
+  @Override
+  public String toString() {
+    final var stringifiedGames = ongoingGames.stream()
+        .sorted(getReversedTotalScoreAndStartDateComparator())
+        .map(Game::toString)
+        .collect(Collectors.joining("\n"));
+    return "\n" + stringifiedGames + "\n";
   }
 }
