@@ -96,7 +96,18 @@ public class ScoreBoardTest {
     // then
     assertThat(thrown)
         .isInstanceOf(IllegalGameException.class)
-        .hasMessage("Game cannot be started for a null team.");
+        .hasMessage("Game cannot be started for a null or empty-named team.");
+  }
+
+  @Test
+  public void shouldThrowExceptionDuringNewGameInitializationIfAnyTeamHasAnEmptyName() {
+    // when
+    final var thrown = catchThrowable(() -> scoreBoard.startGame(Team.of(""), MEXICO_TEAM));
+
+    // then
+    assertThat(thrown)
+        .isInstanceOf(IllegalGameException.class)
+        .hasMessage("Game cannot be started for a null or empty-named team.");
   }
 
   @Test
