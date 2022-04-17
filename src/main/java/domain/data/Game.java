@@ -24,7 +24,7 @@ public class Game {
   private int awayTeamScore;
 
   boolean isValidGame() {
-    return Objects.nonNull(homeTeam) && Objects.nonNull(awayTeam);
+    return Objects.nonNull(homeTeam) && Objects.nonNull(awayTeam) && homeTeam.isValid() && awayTeam.isValid();
   }
 
   void updateScore(final int homeTeamScore, final int awayTeamScore) {

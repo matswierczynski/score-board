@@ -24,7 +24,7 @@ public class ScoreBoard {
     final var gameToStart = Game.of(homeTeam, awayTeam, clock.instant());
 
     if (!gameToStart.isValidGame()) {
-      throw new IllegalGameException("Game cannot be started for a null team.");
+      throw new IllegalGameException("Game cannot be started for a null or empty-named team.");
     }
 
     if (isOngoingGame(gameToStart)) {
